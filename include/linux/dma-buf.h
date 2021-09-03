@@ -316,6 +316,8 @@ struct dma_buf {
 
 		__poll_t active;
 	} cb_excl, cb_shared;
+
+	bool from_kmem;
 };
 
 /**
