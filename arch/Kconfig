@@ -554,6 +554,15 @@ config CFI_CLANG_SHADOW
 	  If you select this option, the kernel builds a fast look-up table of
 	  CFI check functions in loaded modules to reduce overhead.
 
+config LLVM_POLLY
+	bool "Enable LLVM's polyhedral loop optimizer (Polly)"
+	default n
+	help
+	  This option enables LLVM's polyhedral loop optimizer known as Polly.
+	  Polly is able to optimize various loops throughout the kernel for
+	  maximum cache locality. This requires an LLVM toolchain explicitly
+	  compiled with Polly support.
+
 config ARCH_SUPPORTS_SHADOW_CALL_STACK
 	bool
 	help
@@ -979,6 +988,20 @@ config HAVE_ARCH_PREL32_RELOCATIONS
 	  for PCI fixup, initcalls etc which are only half the size on 64 bit
 	  architectures, and don't require runtime relocation on relocatable
 	  kernels.
+
+# Select if the architecture has support for applying RELR relocations.
+config ARCH_HAS_RELR
+	bool
+
+config RELR
+	bool "Use RELR relocation packing"
+	depends on ARCH_HAS_RELR && TOOLS_SUPPORT_RELR
+	default y
+	help
+	  Store the kernel's dynamic relocations in the RELR relocation packing
+	  format. Requires a compatible linker (LLD supports this feature), as
+	  well as compatible NM and OBJCOPY utilities (llvm-nm and llvm-objcopy
+	  are compatible).
 
 source "kernel/gcov/Kconfig"
 

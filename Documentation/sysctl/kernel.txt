@@ -78,6 +78,7 @@ show up in /proc/sys/kernel:
 - reboot-cmd                  [ SPARC only ]
 - rtsig-max
 - rtsig-nr
+- sched_energy_aware
 - seccomp/                    ==> Documentation/userspace-api/seccomp_filter.rst
 - sem
 - sem_next_id		      [ sysv ipc ]
@@ -94,6 +95,7 @@ show up in /proc/sys/kernel:
 - sysctl_writes_strict
 - tainted
 - threads-max
+- unprivileged_bpf_disabled
 - unknown_nmi_panic
 - watchdog
 - watchdog_thresh
@@ -693,8 +695,7 @@ allowed to execute.
 perf_event_paranoid:
 
 Controls use of the performance events system by unprivileged
-users (without CAP_SYS_ADMIN).  The default value is 3 if
-CONFIG_SECURITY_PERF_EVENTS_RESTRICT is set, or 2 otherwise.
+users (without CAP_SYS_ADMIN).  The default value is 2.
 
  -1: Allow use of (almost) all events by all users
      Ignore mlock limit after perf_event_mlock_kb without CAP_IPC_LOCK
@@ -702,7 +703,6 @@ CONFIG_SECURITY_PERF_EVENTS_RESTRICT is set, or 2 otherwise.
      Disallow raw tracepoint access by users without CAP_SYS_ADMIN
 >=1: Disallow CPU event access by users without CAP_SYS_ADMIN
 >=2: Disallow kernel profiling by users without CAP_SYS_ADMIN
->=3: Disallow all event access by users without CAP_SYS_ADMIN
 
 ==============================================================
 
@@ -874,6 +874,17 @@ rtsig-nr shows the number of RT signals currently queued.
 
 ==============================================================
 
+sched_energy_aware:
+
+Enables/disables Energy Aware Scheduling (EAS). EAS starts
+automatically on platforms where it can run (that is,
+platforms with asymmetric CPU topologies and having an Energy
+Model available). If your platform happens to meet the
+requirements for EAS but you do not want to use it, change
+this value to 0.
+
+==============================================================
+
 sched_schedstats:
 
 Enables/disables scheduler statistics. Enabling this feature
@@ -1040,6 +1051,26 @@ EINVAL occurs.
 The value written is checked against the available RAM pages. If the
 thread structures would occupy too much (more than 1/8th) of the
 available RAM pages threads-max is reduced accordingly.
+
+==============================================================
+
+unprivileged_bpf_disabled:
+
+Writing 1 to this entry will disable unprivileged calls to bpf();
+once disabled, calling bpf() without CAP_SYS_ADMIN will return
+-EPERM. Once set to 1, this can't be cleared from the running kernel
+anymore.
+
+Writing 2 to this entry will also disable unprivileged calls to bpf(),
+however, an admin can still change this setting later on, if needed, by
+writing 0 or 1 to this entry.
+
+If BPF_UNPRIV_DEFAULT_OFF is enabled in the kernel config, then this
+entry will default to 2 instead of 0.
+
+  0 - Unprivileged calls to bpf() are enabled
+  1 - Unprivileged calls to bpf() are disabled without recovery
+  2 - Unprivileged calls to bpf() are disabled
 
 ==============================================================
 
