@@ -7,7 +7,7 @@ At the time of writing, this project is not in active development.
 ## Features
 
 - Linux 4.19.87
-- OneUI 6.x support
+- AOSP support
 - Supports all Exynos 990 devices
 - Compiled with Neutron Clang 18 + LLVM/LLVM_IAS and arhitecture optimization
 - KernelSU v0.9.5 (version 11872) support
