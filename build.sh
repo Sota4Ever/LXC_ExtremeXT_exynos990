@@ -223,6 +223,11 @@ if [ -z "$RECOVERY" ]; then
     --ramdisk $RAMDISK --ramdisk_offset $RAMDISK_OFFSET \
     --second_offset $SECOND_OFFSET --tags_offset $TAGS_OFFSET -o $OUTPUT_FILE || abort
 
+    # Fill boot image size
+    echo "Fill boot image size..."
+    echo "-----------------------------------------------"
+    python3 toolchain/avbtool.py add_hash_footer --image $OUTPUT_FILE --partition_name boot --partition_size 61865984
+
     # Build zip
     echo "Building zip..."
     echo "-----------------------------------------------"
